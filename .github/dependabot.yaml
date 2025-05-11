@@ -9,9 +9,6 @@ updates:
       timezone: Asia/Seoul
     open-pull-requests-limit: 10
     target-branch: "main"
-    labels:
-      - "dependencies"
-      - "nuget"
     groups:
       nuget-dependencies:
         patterns:
@@ -26,6 +23,3 @@ updates:
       interval: "daily"
       time: "09:00"
       timezone: "UTC"
-    labels:
-      - "dependencies"
-      - "github-actions"
