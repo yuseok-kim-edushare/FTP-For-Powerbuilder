@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU</Platforms>
+    <AssemblyName>FluentFtpWrapper</AssemblyName>
+    <RootNamespace>FluentFtpWrapper</RootNamespace>
+    <Description>FluentFTP wrapper for PowerBuilder</Description>
+    <Authors>yuseok-kim-edushare</Authors>
+    <Company>EduShare</Company>
+    <Product>FluentFtpWrapper</Product>
+    <Copyright>Copyright © 2025</Copyright>
+    <Version>0.0.1</Version>
+    <FileVersion>0.0.1</FileVersion>
+    <AssemblyVersion>0.0.1.1</AssemblyVersion>
+    <ComVisible>true</ComVisible>
+    <!--
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="48.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="connections.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project> 

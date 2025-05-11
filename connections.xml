@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FtpConnections>
+  <Profile name="Development">
+    <Host>ftp.dev-server.com</Host>
+    <Username>dev-user</Username>
+    <Password>dev-password</Password>
+    <UseSsl>true</UseSsl>
+  </Profile>
+  <Profile name="Testing">
+    <Host>ftp.test-server.com</Host>
+    <Username>test-user</Username>
+    <Password>test-password</Password>
+    <UseSsl>true</UseSsl>
+  </Profile>
+  <Profile name="Production">
+    <Host>ftp.production-server.com</Host>
+    <Username>prod-user</Username>
+    <Password>prod-password</Password>
+    <UseSsl>true</UseSsl>
+  </Profile>
+  <Profile name="LocalDev">
+    <Host>127.0.0.1</Host>
+    <Username>local-user</Username>
+    <Password>local-password</Password>
+    <UseSsl>false</UseSsl>
+  </Profile>
+</FtpConnections> 
