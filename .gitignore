@@ -34,3 +34,10 @@ Thumbs.db
 # Build results
 [Dd]ebug/
 [Rr]elease/ 
+
+# ILRepack
+ilrepack.log
+ilrepack.exe
+
+# Release files
+release-files/
