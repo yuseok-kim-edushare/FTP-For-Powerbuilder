@@ -6,16 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Platforms>AnyCPU</Platforms>
     <AssemblyName>FluentFtpWrapper</AssemblyName>
     <RootNamespace>FluentFtpWrapper</RootNamespace>
     <Description>FluentFTP wrapper for PowerBuilder</Description>
     <Authors>yuseok-kim-edushare</Authors>
-    <Company>EduShare</Company>
     <Product>FluentFtpWrapper</Product>
     <Copyright>Copyright © 2025</Copyright>
     <Version>0.0.1</Version>
