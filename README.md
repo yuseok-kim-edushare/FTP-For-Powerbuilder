@@ -19,6 +19,10 @@ This library provides a COM-compatible wrapper around the FluentFTP library, des
    ```
    regasm FluentFtpWrapper.dll /tlb:FluentFtpWrapper.tlb /codebase
    ```
+3. if you want use your custom key pair file, use sn tool that from .net framework sdk
+    ```
+    C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\sn.exe -k (keyfile.snk)
+    ```
 
 ## Configuration
 

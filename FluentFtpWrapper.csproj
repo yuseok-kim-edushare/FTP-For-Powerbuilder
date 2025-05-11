@@ -16,10 +16,8 @@
     <FileVersion>0.0.1</FileVersion>
     <AssemblyVersion>0.0.1.1</AssemblyVersion>
     <ComVisible>true</ComVisible>
-    <!--
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
-    -->
   </PropertyGroup>
 
   <ItemGroup>
