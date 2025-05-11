@@ -1,3 +1,4 @@
+0. use IL-Repack for merge dll into single dll file, for easier and avoid dependencies collision
 1. implement connections.xml encrypt and decrypt with .net native api about AES256 GCM
     - if .net 48, use external call about windows Cryptographic Next Generation
     - if .net 8, use native aes gcm
