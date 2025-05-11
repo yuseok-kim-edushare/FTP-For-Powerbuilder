@@ -18,20 +18,16 @@ namespace FluentFtpWrapper
     public class FtpClientWrapper : IDisposable
     {
         // Store connection parameters
-        private string _host;
-        private string _username;
-        private string _password;
-        private FtpClient _client;
+        private string? _host;
+        private string? _username;
+        private string? _password;
+        private FtpClient? _client;
         
         // Store security-related settings
         private bool _useSsl = false;
 
         // Configuration files path
-        private string _userConfigPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "FtpClientWrapper",
-            "connections.xml");
-            
+        private string _userConfigPath = ".\\connections.xml";
         private string _appConfigPath;
         
         // Connection profiles
@@ -44,12 +40,12 @@ namespace FluentFtpWrapper
         {
             // Initialize the application directory config path
             string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
+            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? string.Empty;
             _appConfigPath = Path.Combine(assemblyDirectory, "connections.xml");
             
             // Create user config directory if it doesn't exist
-            string userConfigDir = Path.GetDirectoryName(_userConfigPath);
-            if (!Directory.Exists(userConfigDir))
+            string userConfigDir = Path.GetDirectoryName(_userConfigPath) ?? string.Empty;
+            if (!string.IsNullOrEmpty(userConfigDir) && !Directory.Exists(userConfigDir))
             {
                 Directory.CreateDirectory(userConfigDir);
             }
@@ -65,24 +61,29 @@ namespace FluentFtpWrapper
             {
                 if (File.Exists(filePath))
                 {
-                    XmlDocument doc = new XmlDocument();
+                    var doc = new XmlDocument();
                     doc.Load(filePath);
                     
-                    XmlNodeList profileNodes = doc.SelectNodes("//Profile");
+                    XmlNodeList? profileNodes = doc.SelectNodes("//Profile");
                     if (profileNodes != null)
                     {
                         foreach (XmlNode node in profileNodes)
                         {
-                            string name = node.Attributes["name"]?.Value;
-                            if (!string.IsNullOrEmpty(name))
+                            var nameAttr = node.Attributes?["name"];
+                            string name = nameAttr?.Value ?? string.Empty;
+                            if (!string.IsNullOrWhiteSpace(name))
                             {
+                                var hostNode = node.SelectSingleNode("Host");
+                                var usernameNode = node.SelectSingleNode("Username");
+                                var passwordNode = node.SelectSingleNode("Password");
+                                var useSslNode = node.SelectSingleNode("UseSsl");
                                 ConnectionProfile profile = new ConnectionProfile
                                 {
                                     Name = name,
-                                    Host = node.SelectSingleNode("Host")?.InnerText,
-                                    Username = node.SelectSingleNode("Username")?.InnerText,
-                                    Password = node.SelectSingleNode("Password")?.InnerText,
-                                    UseSsl = bool.Parse(node.SelectSingleNode("UseSsl")?.InnerText ?? "false")
+                                    Host = hostNode?.InnerText ?? string.Empty,
+                                    Username = usernameNode?.InnerText ?? string.Empty,
+                                    Password = passwordNode?.InnerText ?? string.Empty,
+                                    UseSsl = bool.TryParse(useSslNode?.InnerText, out var ssl) ? ssl : false
                                 };
                                 
                                 _profiles[name] = profile;
@@ -108,25 +109,25 @@ namespace FluentFtpWrapper
         {
             try
             {
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 XmlElement root = doc.CreateElement("FtpConnections");
                 doc.AppendChild(root);
                 
                 foreach (var profile in _profiles.Values)
                 {
                     XmlElement profileElement = doc.CreateElement("Profile");
-                    profileElement.SetAttribute("name", profile.Name);
+                    profileElement.SetAttribute("name", profile.Name ?? string.Empty);
                     
                     XmlElement hostElement = doc.CreateElement("Host");
-                    hostElement.InnerText = profile.Host;
+                    hostElement.InnerText = profile.Host ?? string.Empty;
                     profileElement.AppendChild(hostElement);
                     
                     XmlElement usernameElement = doc.CreateElement("Username");
-                    usernameElement.InnerText = profile.Username;
+                    usernameElement.InnerText = profile.Username ?? string.Empty;
                     profileElement.AppendChild(usernameElement);
                     
                     XmlElement passwordElement = doc.CreateElement("Password");
-                    passwordElement.InnerText = profile.Password;
+                    passwordElement.InnerText = profile.Password ?? string.Empty;
                     profileElement.AppendChild(passwordElement);
                     
                     XmlElement sslElement = doc.CreateElement("UseSsl");
@@ -146,7 +147,7 @@ namespace FluentFtpWrapper
         }
         
         // Configures whether to save to the user's application data folder or alongside the DLL
-        public string setSaveLocation(string location)
+        public string SetSaveLocation(string location)
         {
             try
             {
@@ -166,7 +167,7 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string saveProfile(string profileName, string host, string username, string password, bool useSsl)
+        public string SaveProfile(string profileName, string host, string username, string password, bool useSsl)
         {
             try
             {
@@ -190,7 +191,7 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string deleteProfile(string profileName)
+        public string DeleteProfile(string profileName)
         {
             try
             {
@@ -211,31 +212,31 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string listProfiles(out string[] profileNames)
+        public string ListProfiles(out string[] profileNames)
         {
             try
             {
-                profileNames = new string[_profiles.Count];
+                profileNames = _profiles.Count > 0 ? new string[_profiles.Count] : Array.Empty<string>();
                 _profiles.Keys.CopyTo(profileNames, 0);
                 return "SUCCESS: Profiles retrieved.";
             }
             catch (Exception ex)
             {
-                profileNames = new string[0];
+                profileNames = Array.Empty<string>();
                 return $"ERROR: {ex.Message}";
             }
         }
 
-        public string connectWithProfile(string profileName)
+        public string ConnectWithProfile(string profileName)
         {
             try
             {
-                if (!_profiles.TryGetValue(profileName, out ConnectionProfile profile))
+                if (!_profiles.TryGetValue(profileName, out ConnectionProfile? profile))
                 {
                     return $"ERROR: Profile '{profileName}' not found.";
                 }
                 
-                return connect(profile.Host, profile.Username, profile.Password, profile.UseSsl);
+                return Connect(profile.Host, profile.Username, profile.Password, profile.UseSsl);
             }
             catch (Exception ex)
             {
@@ -243,7 +244,7 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string enableSsl(bool useSsl)
+        public string EnableSsl(bool useSsl)
         {
             try
             {
@@ -256,12 +257,12 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string connect(string host, string username, string password)
+        public string Connect(string host, string username, string password)
         {
-            return connect(host, username, password, _useSsl);
+            return Connect(host, username, password, _useSsl);
         }
 
-        public string connect(string host, string username, string password, bool useSsl)
+        public string Connect(string host, string username, string password, bool useSsl)
         {
             try
             {
@@ -272,8 +273,10 @@ namespace FluentFtpWrapper
                 _useSsl = useSsl;
                 
                 // Create and connect the client
-                _client = new FtpClient(host);
-                _client.Credentials = new NetworkCredential(username, password);
+                _client = new FtpClient(host)
+                {
+                    Credentials = new NetworkCredential(username, password)
+                };
                 
                 // Configure security if needed
                 if (_useSsl)
@@ -304,7 +307,7 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string disconnect()
+        public string Disconnect()
         {
             try
             {
@@ -322,21 +325,21 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string uploadFile(string localPath, string remotePath)
+        public string UploadFile(string localPath, string remotePath)
         {
-            return uploadFile(localPath, remotePath, _host, _username, _password, _useSsl);
+            return UploadFile(localPath, remotePath, _host ?? string.Empty, _username ?? string.Empty, _password ?? string.Empty, _useSsl);
         }
 
-        public string uploadFileWithProfile(string localPath, string remotePath, string profileName)
+        public string UploadFileWithProfile(string localPath, string remotePath, string profileName)
         {
             try
             {
-                if (!_profiles.TryGetValue(profileName, out ConnectionProfile profile))
+                if (!_profiles.TryGetValue(profileName, out ConnectionProfile? profile))
                 {
                     return $"ERROR: Profile '{profileName}' not found.";
                 }
-                
-                return uploadFile(localPath, remotePath, profile.Host, profile.Username, profile.Password, profile.UseSsl);
+
+                return UploadFile(localPath, remotePath, profile.Host, profile.Username, profile.Password, profile.UseSsl);
             }
             catch (Exception ex)
             {
@@ -344,14 +347,16 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string uploadFile(string localPath, string remotePath, string host, string username, string password, bool useSsl)
+        public string UploadFile(string localPath, string remotePath, string host, string username, string password, bool useSsl)
         {
-            FtpClient client = null;
+            FtpClient? client = null;
             try
             {
                 // Create a new connection for this operation
-                client = new FtpClient(host);
-                client.Credentials = new NetworkCredential(username, password);
+                client = new FtpClient(host)
+                {
+                    Credentials = new NetworkCredential(username, password)
+                };
                 
                 // Configure security if needed
                 if (useSsl)
@@ -390,21 +395,21 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string downloadFile(string remotePath, string localPath)
+        public string DownloadFile(string remotePath, string localPath)
         {
-            return downloadFile(remotePath, localPath, _host, _username, _password, _useSsl);
+            return DownloadFile(remotePath, localPath, _host ?? string.Empty, _username ?? string.Empty, _password ?? string.Empty, _useSsl);
         }
 
-        public string downloadFileWithProfile(string remotePath, string localPath, string profileName)
+        public string DownloadFileWithProfile(string remotePath, string localPath, string profileName)
         {
             try
             {
-                if (!_profiles.TryGetValue(profileName, out ConnectionProfile profile))
+                if (!_profiles.TryGetValue(profileName, out ConnectionProfile? profile))
                 {
                     return $"ERROR: Profile '{profileName}' not found.";
                 }
                 
-                return downloadFile(remotePath, localPath, profile.Host, profile.Username, profile.Password, profile.UseSsl);
+                return DownloadFile(remotePath, localPath, profile.Host, profile.Username, profile.Password, profile.UseSsl);
             }
             catch (Exception ex)
             {
@@ -412,14 +417,16 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string downloadFile(string remotePath, string localPath, string host, string username, string password, bool useSsl)
+        public string DownloadFile(string remotePath, string localPath, string host, string username, string password, bool useSsl)
         {
-            FtpClient client = null;
+            FtpClient? client = null;
             try
             {
                 // Create a new connection for this operation
-                client = new FtpClient(host);
-                client.Credentials = new NetworkCredential(username, password);
+                client = new FtpClient(host)
+                {
+                    Credentials = new NetworkCredential(username, password)
+                };
                 
                 // Configure security if needed
                 if (useSsl)
@@ -458,38 +465,41 @@ namespace FluentFtpWrapper
             }
         }
 
-        public string listDirectory(string remotePath, out string[] files)
+        public string ListDirectory(string remotePath, out string[] files)
         {
-            return listDirectory(remotePath, out files, _host, _username, _password, _useSsl);
+            return ListDirectory(remotePath, out files, _host ?? string.Empty, _username ?? string.Empty, _password ?? string.Empty, _useSsl);
         }
 
-        public string listDirectoryWithProfile(string remotePath, out string[] files, string profileName)
+        public string ListDirectoryWithProfile(string remotePath, out string[] files, string profileName)
         {
-            files = new string[0];
+            files = Array.Empty<string>();
             try
             {
-                if (!_profiles.TryGetValue(profileName, out ConnectionProfile profile))
+                if (!_profiles.TryGetValue(profileName, out ConnectionProfile? profile))
                 {
                     return $"ERROR: Profile '{profileName}' not found.";
                 }
                 
-                return listDirectory(remotePath, out files, profile.Host, profile.Username, profile.Password, profile.UseSsl);
+                return ListDirectory(remotePath, out files, profile.Host, profile.Username, profile.Password, profile.UseSsl);
             }
             catch (Exception ex)
             {
+                files = Array.Empty<string>();
                 return $"ERROR: {ex.Message}";
             }
         }
 
-        public string listDirectory(string remotePath, out string[] files, string host, string username, string password, bool useSsl)
+        public string ListDirectory(string remotePath, out string[] files, string host, string username, string password, bool useSsl)
         {
-            files = new string[0];
-            FtpClient client = null;
+            files = Array.Empty<string>();
+            FtpClient? client = null;
             try
             {
                 // Create a new connection for this operation
-                client = new FtpClient(host);
-                client.Credentials = new NetworkCredential(username, password);
+                client = new FtpClient(host)
+                {
+                    Credentials = new NetworkCredential(username, password)
+                };
                 
                 // Configure security if needed
                 if (useSsl)
@@ -511,11 +521,12 @@ namespace FluentFtpWrapper
                 
                 client.Connect();
                 var items = client.GetNameListing(remotePath);
-                files = items;
+                files = items ?? Array.Empty<string>();
                 return "SUCCESS: Directory listed.";
             }
             catch (Exception ex)
             {
+                files = Array.Empty<string>();
                 return $"ERROR: {ex.Message}";
             }
             finally
@@ -530,19 +541,14 @@ namespace FluentFtpWrapper
         }
         
         // For backward compatibility
-        public string uploadfile(string localPath, string remotePath)
+        public string Uploadfile(string localPath, string remotePath)
         {
-            return uploadFile(localPath, remotePath);
+            return UploadFile(localPath, remotePath);
         }
         
-        public string downloadfile(string remotePath, string localPath)
+        public string Downloadfile(string remotePath, string localPath)
         {
-            return downloadFile(remotePath, localPath);
-        }
-        
-        public string istdirectory(string remotePath, out string[] files)
-        {
-            return listDirectory(remotePath, out files);
+            return DownloadFile(remotePath, localPath);
         }
         
         // Implement IDisposable pattern to ensure cleanup of sensitive data
@@ -589,10 +595,10 @@ namespace FluentFtpWrapper
     // Connection profile class to store connection settings
     internal class ConnectionProfile
     {
-        public string Name { get; set; }
-        public string Host { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Host { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
         public bool UseSsl { get; set; }
     }
 } 

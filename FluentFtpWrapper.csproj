@@ -14,7 +14,7 @@
     <Copyright>Copyright © 2025</Copyright>
     <Version>0.0.1</Version>
     <FileVersion>0.0.1</FileVersion>
-    <AssemblyVersion>0.0.1.1</AssemblyVersion>
+    <AssemblyVersion>0.0.1.3</AssemblyVersion>
     <ComVisible>true</ComVisible>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
