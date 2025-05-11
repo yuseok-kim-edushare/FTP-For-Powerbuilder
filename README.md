@@ -2,6 +2,9 @@
 
 This library provides a COM-compatible wrapper around the FluentFTP library, designed specifically for use with PowerBuilder applications.
 
+## Thanks to
+- [FluentFTP](https://github.com/robinrodricks/FluentFTP)
+
 ## Features
 
 - Simple FTP/FTPS operations with intuitive API
@@ -12,7 +15,7 @@ This library provides a COM-compatible wrapper around the FluentFTP library, des
 ## Installation
 
 1. Copy the `FluentFtpWrapper.dll` and `connections.xml` files to your application directory
-2. Register the COM library using:
+2. Register the COM library using: (If you use Modern powerbuilder, you can call directly without com, check about .net dll importer in PB IDE)
    ```
    regasm FluentFtpWrapper.dll /tlb:FluentFtpWrapper.tlb /codebase
    ```
@@ -97,4 +100,4 @@ string result = ftpClient.deleteProfile("MyServer")
 
 ## License
 
-Copyright © 2025 EduShare 
+MIT based open source project
