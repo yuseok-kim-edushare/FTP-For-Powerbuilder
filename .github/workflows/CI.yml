@@ -18,8 +18,8 @@ jobs:
           dotnet-version: |
             8.0.x
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore FluentFtpWrapper.csproj
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build FluentFtpWrapper.csproj --configuration Release --no-restore
       - name: Test
-        run: echo "No tests yet" 
+        run: echo "No tests yet" # TODO: Add tests

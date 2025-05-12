@@ -1,0 +1,102 @@
+name: CI tests on dotnet build and test
+on:
+  workflow_run:
+    workflows: ["CI tests"]
+    types:
+      - completed
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+  discussions: write
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: true
+        fetch-depth: 0
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln*', '**/*.csproj*') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: |
+        dotnet restore FluentFtpWrapper.csproj
+    
+    - name: Build solution for release
+      run: |
+        dotnet publish FluentFtpWrapper.csproj --configuration Release --no-restore -f net48
+        dotnet publish FluentFtpWrapper.csproj --configuration Release --no-restore -f net8.0
+        
+    - name: Get latest release version and Generate release notes
+      id: get_latest_release
+      run: |
+        try {
+          $latest_release = $(git describe --tags --abbrev=0)
+          Write-Output "Latest release version: $latest_release"
+          echo "latest_release=$latest_release" >> $env:GITHUB_ENV
+          $versionParts = $latest_release.Split('.')
+          $versionParts[-1] = [int]$versionParts[-1] + 1
+          $newVersionString = $versionParts -join '.'
+          
+          $releaseNotes = "## Changes in " + $latest_release + "`n"
+          $releaseNotes += (git log HEAD ^$latest_release --oneline) -join "`n"
+          $releaseNotes += "`n"
+          $releaseNotes += "### File edited `n"
+          $releaseNotes += "`n"
+          $releaseNotes += (git diff HEAD ^$latest_release --compact-summary) -join "`n"
+        } catch {
+          Write-Output "No previous release found. Creating initial release 0.0.1"
+          $newVersionString = "0.0.1"
+          
+          $releaseNotes = "## Initial Release v0.0.1`n"
+          $releaseNotes += (git log --oneline) -join "`n"
+          $releaseNotes += "`n"
+          $releaseNotes += "### Files included `n"
+          $releaseNotes += "`n"
+          $releaseNotes += (git ls-files | ForEach-Object { "Added $_" }) -join "`n"
+        }
+        
+        echo "new_release=$newVersionString" >> $env:GITHUB_ENV
+        $releaseNotes | Out-File -FilePath releaseNotes.txt -Encoding utf8
+        $releaseNotesContent = Get-Content -Path releaseNotes.txt -Raw
+        echo "release_notes<<EOF" >> $env:GITHUB_ENV
+        echo "$releaseNotesContent" >> $env:GITHUB_ENV
+        echo "EOF" >> $env:GITHUB_ENV
+
+    - name: Explicit Version Order apply to create release
+      run: |
+        $latestCommitMessage = (git log -1 --pretty=%B)
+        foreach ($line in $latestCommitMessage) {
+          if ($line -match "Update Version to (\d+\.\d+\.\d+)") {
+            $messageParts = $line -split ' '
+            $lastPart = $messageParts[-1]
+            echo "new_release=$lastPart" >> $env:GITHUB_ENV
+          }
+        }
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ${{ github.workspace }}\release-files\net48\FluentFtpWrapper.dll
+          ${{ github.workspace }}\release-files\net8.0\FluentFtpWrapper.dll
+          ${{ github.workspace }}\connections.xml
+        tag_name: ${{ env.new_release }}
+        name: Release ${{ env.new_release }}
+        body: ${{ env.release_notes }}
+        draft: false
+        prerelease: false
+        fail_on_unmatched_files: true
+
