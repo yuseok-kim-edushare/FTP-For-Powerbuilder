@@ -3,8 +3,12 @@ name: CI tests on dotnet build and test
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
   workflow_dispatch:
 
 jobs:
