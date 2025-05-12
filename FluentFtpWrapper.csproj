@@ -11,9 +11,9 @@
     <Authors>yuseok-kim-edushare</Authors>
     <Product>FluentFtpWrapper</Product>
     <Copyright>Copyright © 2025</Copyright>
-    <Version>0.0.1</Version>
-    <FileVersion>0.0.1</FileVersion>
-    <AssemblyVersion>0.0.1.5</AssemblyVersion>
+    <Version>0.0.2</Version>
+    <FileVersion>0.0.2</FileVersion>
+    <AssemblyVersion>0.0.2.0</AssemblyVersion>
     <ComVisible>true</ComVisible>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <MergeAssemblies Include="$(OutputPath)\publish\$(AssemblyName).dll"/>
-    <MergeAssebmlies Include="$(OutputPath)\publish\FluentFTP.dll" />
+    <MergeAssemblies Include="$(OutputPath)\publish\FluentFTP.dll" />
   </ItemGroup>
 
   <Target Name="MergeAssemblies" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
