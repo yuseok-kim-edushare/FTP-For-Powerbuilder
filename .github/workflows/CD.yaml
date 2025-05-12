@@ -1,7 +1,7 @@
 name: Continuous Deployment
 on:
   workflow_run:
-    workflows: ["CI tests"]
+    workflows: ["CI tests on dotnet build and test"]
     types:
       - completed
     branches: [ "main" ]
