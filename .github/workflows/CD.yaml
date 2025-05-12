@@ -1,4 +1,4 @@
-name: CI tests on dotnet build and test
+name: Continuous Deployment
 on:
   workflow_run:
     workflows: ["CI tests"]
