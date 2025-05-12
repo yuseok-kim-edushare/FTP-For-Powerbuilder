@@ -86,12 +86,17 @@ jobs:
           }
         }
         
+    - name: Rename release assets
+      run: |
+        Rename-Item -Path ${{ github.workspace }}\release-files\net48\FluentFtpWrapper.dll -NewName net48-FluentFtpWrapper.dll
+        Rename-Item -Path ${{ github.workspace }}\release-files\net8.0\FluentFtpWrapper.dll -NewName net8-FluentFtpWrapper.dll
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ${{ github.workspace }}\release-files\net48\FluentFtpWrapper.dll
-          ${{ github.workspace }}\release-files\net8.0\FluentFtpWrapper.dll
+          ${{ github.workspace }}\release-files\net48\net48-FluentFtpWrapper.dll
+          ${{ github.workspace }}\release-files\net8.0\net8-FluentFtpWrapper.dll
           ${{ github.workspace }}\connections.xml
         tag_name: ${{ env.new_release }}
         name: Release ${{ env.new_release }}
