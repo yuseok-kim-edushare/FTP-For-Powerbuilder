@@ -27,7 +27,7 @@ namespace FluentFtpWrapper
         private bool _useSsl = false;
 
         // Configuration files path
-        private string _userConfigPath = ".\\connections.xml";
+        private string _userConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FTP-For-Powerbuilder", "connections.xml");
         private string _appConfigPath;
         
         // Connection profiles

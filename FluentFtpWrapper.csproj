@@ -13,7 +13,7 @@
     <Copyright>Copyright © 2025</Copyright>
     <Version>0.0.1</Version>
     <FileVersion>0.0.1</FileVersion>
-    <AssemblyVersion>0.0.1.4</AssemblyVersion>
+    <AssemblyVersion>0.0.1.5</AssemblyVersion>
     <ComVisible>true</ComVisible>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
