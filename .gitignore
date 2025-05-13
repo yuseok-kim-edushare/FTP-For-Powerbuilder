@@ -41,3 +41,6 @@ ilrepack.exe
 
 # Release files
 release-files/
+
+# Powerbuilder
+*.usr.opt
