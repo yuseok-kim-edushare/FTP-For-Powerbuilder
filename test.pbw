@@ -1,0 +1,7 @@
+Save Format v3.0(19990112)
+@begin Targets
+ 0 "test-ftp4pb.pbt";
+@end;
+DefaultTarget "test-ftp4pb.pbt";
+DefaultExportEncode "UTF-8";
+DefaultRemoteTarget "test-ftp4pb.pbt";
