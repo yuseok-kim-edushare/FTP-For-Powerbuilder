@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="52.1.0" />
-    <PackageReference Include="ILRepack" Version="2.0.42">
+    <PackageReference Include="ILRepack" Version="2.0.43">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -47,7 +47,7 @@
     </PropertyGroup>
     <Message Text="ILRepack Args: $(ILRepackArgs)" Importance="high" />
     <ItemGroup>
-      <ILRepackExe Include="$(NuGetPackageRoot)\ilrepack\2.0.42\tools\ILRepack.exe" />
+      <ILRepackExe Include="$(NuGetPackageRoot)\ilrepack\2.0.43\tools\ILRepack.exe" />
     </ItemGroup>
     <MakeDir Directories="msbuild\tools" />
     <Copy SourceFiles="@(ILRepackExe)" DestinationFolder="msbuild\tools" SkipUnchangedFiles="true" />
