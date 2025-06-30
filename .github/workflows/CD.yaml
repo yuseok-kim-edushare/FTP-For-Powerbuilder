@@ -25,10 +25,13 @@ jobs:
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
-        path: ${{ github.workspace }}/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln*', '**/*.csproj*') }}
+        path: ${{ env.USERPROFILE }}\.nuget\packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.sln') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
+
+    - name: Install dotnet-ilrepack
+      run: dotnet tool install -g dotnet-ilrepack
 
     - name: Restore dependencies
       run: |

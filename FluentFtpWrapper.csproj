@@ -11,9 +11,9 @@
     <Authors>yuseok-kim-edushare</Authors>
     <Product>FluentFtpWrapper</Product>
     <Copyright>Copyright © 2025</Copyright>
-    <Version>0.0.2</Version>
-    <FileVersion>0.0.2</FileVersion>
-    <AssemblyVersion>0.0.2.0</AssemblyVersion>
+    <Version>0.0.4</Version>
+    <FileVersion>0.0.4</FileVersion>
+    <AssemblyVersion>0.0.4.0</AssemblyVersion>
     <ComVisible>true</ComVisible>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>FluentFtpWrapper.snk</AssemblyOriginatorKeyFile>
@@ -21,10 +21,6 @@
 
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="52.1.0" />
-    <PackageReference Include="ILRepack" Version="2.0.43">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -46,18 +42,12 @@
       <ILRepackArgs>$(ILRepackArgs) /out:"$(MSBuildThisFileDirectory)release-files\$(TargetFramework)\$(AssemblyName).dll"</ILRepackArgs>
     </PropertyGroup>
     <Message Text="ILRepack Args: $(ILRepackArgs)" Importance="high" />
-    <ItemGroup>
-      <ILRepackExe Include="$(NuGetPackageRoot)\ilrepack\2.0.43\tools\ILRepack.exe" />
-    </ItemGroup>
-    <MakeDir Directories="msbuild\tools" />
-    <Copy SourceFiles="@(ILRepackExe)" DestinationFolder="msbuild\tools" SkipUnchangedFiles="true" />
-    <Message Text="Copying ILRepack.exe to msbuild\tools" Importance="high"/>
     <WriteLinesToFile
       File="$(ProjectDir)msbuild\tools\ilrepack.log"
       Lines=""
       Overwrite="true" />
     <Message Text="Cleared ilrepack.log" Importance="high"/>
-    <Exec Command="&quot;msbuild\tools\ILRepack.exe&quot; $(ILRepackArgs) @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ') > &quot;$(ProjectDir)msbuild\tools\ilrepack.log&quot; 2>&amp;1"
+    <Exec Command="ilrepack $(ILRepackArgs) @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ') > &quot;$(ProjectDir)msbuild\tools\ilrepack.log&quot; 2>&amp;1"
           IgnoreExitCode="true"/>
     <Message Text="ILRepack.exe executed $(AssemblyName).dll" Importance="high"/>
     <ReadLinesFromFile File="$(ProjectDir)msbuild\tools\ilrepack.log">
