@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="52.1.0" />
+    <PackageReference Include="FluentFTP" Version="53.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <MergeAssemblies Include="$(OutputPath)\publish\$(AssemblyName).dll"/>
+    <MergeAssemblies Include="$(OutputPath)\publish\$(AssemblyName).dll" />
     <MergeAssemblies Include="$(OutputPath)\publish\FluentFTP.dll" />
   </ItemGroup>
 
@@ -42,24 +42,18 @@
       <ILRepackArgs>$(ILRepackArgs) /out:"$(MSBuildThisFileDirectory)release-files\$(TargetFramework)\$(AssemblyName).dll"</ILRepackArgs>
     </PropertyGroup>
     <Message Text="ILRepack Args: $(ILRepackArgs)" Importance="high" />
-    <WriteLinesToFile
-      File="$(ProjectDir)msbuild\tools\ilrepack.log"
-      Lines=""
-      Overwrite="true" />
-    <Message Text="Cleared ilrepack.log" Importance="high"/>
-    <Exec Command="ilrepack $(ILRepackArgs) @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ') > &quot;$(ProjectDir)msbuild\tools\ilrepack.log&quot; 2>&amp;1"
-          IgnoreExitCode="true"/>
-    <Message Text="ILRepack.exe executed $(AssemblyName).dll" Importance="high"/>
+    <WriteLinesToFile File="$(ProjectDir)msbuild\tools\ilrepack.log" Lines="" Overwrite="true" />
+    <Message Text="Cleared ilrepack.log" Importance="high" />
+    <Exec Command="ilrepack $(ILRepackArgs) @(MergeAssemblies-&gt;'&quot;%(FullPath)&quot;', ' ') &gt; &quot;$(ProjectDir)msbuild\tools\ilrepack.log&quot; 2&gt;&amp;1" IgnoreExitCode="true" />
+    <Message Text="ILRepack.exe executed $(AssemblyName).dll" Importance="high" />
     <ReadLinesFromFile File="$(ProjectDir)msbuild\tools\ilrepack.log">
-      <Output TaskParameter="Lines" ItemName="ILRepackLogLines"/>
+      <Output TaskParameter="Lines" ItemName="ILRepackLogLines" />
     </ReadLinesFromFile>
     <ItemGroup>
-      <ILRepackErrorLines Include="@(ILRepackLogLines)"
-        Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('error'))"/>
-      <ILRepackErrorLines Include="@(ILRepackLogLines)"
-        Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('input file not found'))"/>
+      <ILRepackErrorLines Include="@(ILRepackLogLines)" Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('error'))" />
+      <ILRepackErrorLines Include="@(ILRepackLogLines)" Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('input file not found'))" />
     </ItemGroup>
-    <Error Text="ILRepack error: %(ILRepackErrorLines.Identity)" Condition="@(ILRepackErrorLines->Count()) > 0" />
-    <Message Text="ILRepack Log: %(ILRepackLogLines.Identity)" Importance="high"/>
+    <Error Text="ILRepack error: %(ILRepackErrorLines.Identity)" Condition="@(ILRepackErrorLines-&gt;Count()) &gt; 0" />
+    <Message Text="ILRepack Log: %(ILRepackLogLines.Identity)" Importance="high" />
   </Target>
 </Project> 
