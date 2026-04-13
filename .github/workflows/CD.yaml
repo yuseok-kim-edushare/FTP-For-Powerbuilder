@@ -95,7 +95,7 @@ jobs:
         Rename-Item -Path ${{ github.workspace }}\release-files\net8.0\FluentFtpWrapper.dll -NewName net8-FluentFtpWrapper.dll
 
     - name: Create Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           ${{ github.workspace }}\release-files\net48\net48-FluentFtpWrapper.dll
